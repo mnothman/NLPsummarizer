@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from app.summarizer import summarize_text
+from app.summarizer import summarize_text, summarize_text_async
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -26,7 +26,8 @@ async def summarize(request: Request):
         if not text:
             return {"error": "Input text cannot be empty."}
 
-        summary = summarize_text(text)
+        # Use async function to summarize text for performance
+        summary = await summarize_text_async(text)
         return {"summary": summary}
     except json.JSONDecodeError:
         return {"error": "Invalid JSON format in request body."}
