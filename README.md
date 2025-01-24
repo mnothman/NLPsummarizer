@@ -12,7 +12,7 @@ remove backend/app/templates/ and make a dedicated frontend later
 python -m spacy download en_core_web_sm
 
 
-
+![Image](https://github.com/user-attachments/assets/43c9d492-fed4-4b0e-8b1d-8c6e2fecfd4f)
 
 1. Start FastAPI server
 
