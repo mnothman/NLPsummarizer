@@ -4,10 +4,45 @@
     <title>Text Summarizer</title>
 </head>
 <body>
-    <h1>Text Summarization Tool</h1>
-    <form action="/summarize" method="post">
-        <textarea name="text" rows="10" cols="50" placeholder="Enter your text here"></textarea><br>
+    <h1>Text Summarizer</h1>
+    <form id="summarize-form">
+        <label for="text">Enter text to summarize:</label><br>
+        <textarea id="text" name="text" rows="10" cols="50"></textarea><br><br>
         <button type="submit">Summarize</button>
     </form>
+    <div id="output"></div>
+
+    <script>
+        const form = document.getElementById('summarize-form');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const text = document.getElementById('text').value;
+
+            if (!text.trim()) {
+                document.getElementById('output').innerText = "Please enter some text.";
+                return;
+            }
+
+            try {
+                const response = await fetch('/summarize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text })
+                });
+
+                const data = await response.json();
+                if (data.summary) {
+                    document.getElementById('output').innerText = `Summary: ${data.summary}`;
+                } else {
+                    document.getElementById('output').innerText = `Error: ${data.error}`;
+                }
+            } catch (error) {
+                document.getElementById('output').innerText = `Error: ${error.message}`;
+            }
+        });
+    </script>
 </body>
 </html>

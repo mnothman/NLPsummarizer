@@ -16,6 +16,7 @@ python -m spacy download en_core_web_sm
 
 1. Start FastAPI server
 
+in backend/ directory run:
 ```bash
 uvicorn app.main:app --reload
 ```
