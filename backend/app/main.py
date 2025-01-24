@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from contextlib import asynccontextmanager
 from app.summarizer import summarize_text, summarize_text_async
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -8,7 +9,21 @@ import os
 import logging
 import json
 
-app = FastAPI()
+# Preload the model on startup to avoid delays on first request
+# Use lifespan event handler since on_event is deprecated
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Code to run during startup
+    logging.info("Preloading Pegasus model...")
+    _ = summarize_text("This is a test text.")
+    logging.info("Model preloaded successfully.")
+
+    yield  # Wait until the app is shutting down
+
+    # Run during shutdown
+    logging.info("Application is shutting down.")
+
+app = FastAPI(lifespan=lifespan)
 
 logging.basicConfig(level=logging.DEBUG)
 
