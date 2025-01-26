@@ -5,3 +5,4 @@ torch
 spacy
 sentencepiece
 aiocache
+Axios

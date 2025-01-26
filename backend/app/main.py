@@ -1,10 +1,11 @@
 from fastapi import FastAPI, Request
 from contextlib import asynccontextmanager
 from app.summarizer import summarize_text, summarize_text_async
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
+from fastapi.responses import FileResponse
 import os
 import logging
 import json
@@ -27,32 +28,46 @@ app = FastAPI(lifespan=lifespan)
 
 logging.basicConfig(level=logging.DEBUG)
 
+
 @app.post("/summarize")
 async def summarize(request: Request):
     try:
-        # Read the raw body and then parse JSON from request
         body = await request.body()
         if not body:
-            return {"error": "Request body is empty."}
+            return JSONResponse({"error": "Request body is empty."}, status_code=400)
 
         data = await request.json()
         text = data.get("text", "").strip()
 
         if not text:
-            return {"error": "Input text cannot be empty."}
+            return JSONResponse({"error": "Input text cannot be empty."}, status_code=400)
 
         # Use async function to summarize text for performance
         summary = await summarize_text_async(text)
         return {"summary": summary}
     except json.JSONDecodeError:
-        return {"error": "Invalid JSON format in request body."}
+        return JSONResponse({"error": "Invalid JSON format in request body."}, status_code=400)
     except Exception as e:
-        return {"error": f"An unexpected error occurred: {str(e)}"}
+        logging.error(f"An unexpected error occurred: {str(e)}")
+        return JSONResponse({"error": f"An unexpected error occurred: {str(e)}"}, status_code=500)
 
-static_path = os.path.join(os.path.dirname(__file__), "../static")
-app.mount("/static", StaticFiles(directory=static_path), name="static")
-templates = Jinja2Templates(directory="app/templates")
 
-@app.get("/", response_class=HTMLResponse)
-async def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+dist_path = os.path.join(os.path.dirname(__file__), "dist")
+if not os.path.exists(dist_path):
+    raise RuntimeError(f"Directory '{dist_path}' does not exist")
+
+app.mount("/dist", StaticFiles(directory=dist_path), name="dist")
+
+@app.get("/", response_class=FileResponse)
+async def serve_index():
+    index_path = os.path.join(dist_path, "index.html")
+    if not os.path.exists(index_path):
+        raise RuntimeError(f"Index file '{index_path}' does not exist")
+    return FileResponse(index_path)
+
+@app.get("/{full_path:path}")
+async def fallback(full_path: str):
+    index_path = os.path.join(dist_path, "index.html")
+    if not os.path.exists(index_path):
+        raise RuntimeError(f"Index file '{index_path}' does not exist")
+    return FileResponse(index_path)
