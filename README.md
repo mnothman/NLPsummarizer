@@ -108,6 +108,8 @@ rontend/tests
 cd frontend
 npm run test:unit
 ```
+![Image](https://github.com/user-attachments/assets/e7207eee-2b77-4e45-b266-4543c1666d3d)
+![Image](https://github.com/user-attachments/assets/2c5d78cf-fb47-44a3-802d-cddbd88d8f28)
 
 NLPproject/ <br/>
 ├── backend/ <br/>
