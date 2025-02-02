@@ -7,7 +7,8 @@ Hugging face transformer for pegasus model used to summarize
 Utilizes caching and chunk processing to handle large text inputs, splits into manageable chunks
 Vue.js frontend is served directly through FastAPI
 
-
+Uses pytest and httpx for backend testing
+For frontend testing use Jest
 
 1. Clone Repository
 
@@ -16,7 +17,7 @@ git clone https://github.com/mnothman/NLPsummarizer
 cd NLPsummarizer
 ```
 
-2. Setup Backend
+# 2. Setup Backend
 
 ```bash
 cd backend
@@ -28,7 +29,7 @@ python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-Install dependencies
+Install dependencies for backend
 
 ```bash
 pip install -r requirements.txt
@@ -50,7 +51,7 @@ http://127.0.0.1:8000
 To see docs:
 http://127.0.0.1:8000/docs
 
-4. Frontend
+# 4. Frontend
 
 Navigate to frontend directory
 
@@ -87,6 +88,26 @@ Visit the frontend at http://127.0.0.1:8000/
 
 ![Image](https://github.com/user-attachments/assets/43c9d492-fed4-4b0e-8b1d-8c6e2fecfd4f)
 
+
+# For testing:
+Uses pytest and httpx for backend testing
+For frontend testing use Jest
+
+
+Backend Testing
+backend/tests
+
+```bash
+cd backend
+pytest tests/
+```
+
+Frontend Testing 
+rontend/tests
+```bash
+cd frontend
+npm run test:unit
+```
 
 NLPproject/ <br/>
 ├── backend/ <br/>

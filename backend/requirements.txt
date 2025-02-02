@@ -6,3 +6,5 @@ spacy
 sentencepiece
 aiocache
 Axios
+pytest
+httpx
